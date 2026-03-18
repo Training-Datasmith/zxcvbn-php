@@ -58,7 +58,6 @@ abstract class BaseMatch implements MatchInterface
      *   String to search.
      * @param string $regex
      *   Regular expression with captures.
-     * @param int $offset
      * @return array
      *   Array of capture groups. Captures in a group have named indexes: 'begin', 'end', 'token'.
      *     e.g. fishfish /(fish)/
@@ -115,9 +114,6 @@ abstract class BaseMatch implements MatchInterface
     /**
      * Calculate binomial coefficient (n choose k).
      *
-     * @param int $n
-     * @param int $k
-     * @return float
      * @deprecated Use {@see Binomial::binom()} instead
      */
     public static function binom(int $n, int $k): float
@@ -134,14 +130,13 @@ abstract class BaseMatch implements MatchInterface
 
     protected function getMinimumGuesses(): float
     {
-        if (mb_strlen($this->token) < mb_strlen($this->password)) {
-            if (mb_strlen($this->token) === 1) {
-                return Scorer::MIN_SUBMATCH_GUESSES_SINGLE_CHAR;
-            } else {
-                return Scorer::MIN_SUBMATCH_GUESSES_MULTI_CHAR;
-            }
+        if (mb_strlen($this->token) >= mb_strlen($this->password)) {
+            return 0;
         }
-        return 0;
+        if (mb_strlen($this->token) === 1) {
+            return Scorer::MIN_SUBMATCH_GUESSES_SINGLE_CHAR;
+        }
+        return Scorer::MIN_SUBMATCH_GUESSES_MULTI_CHAR;
     }
 
     public function getGuessesLog10(): float

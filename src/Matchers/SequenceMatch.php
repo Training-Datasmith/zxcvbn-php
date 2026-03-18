@@ -23,8 +23,6 @@ class SequenceMatch extends BaseMatch
     /**
      * Match sequences of three or more characters.
      *
-     * @param string $password
-     * @param array $userInputs
      * @return SequenceMatch[]
      */
     public static function match(string $password, array $userInputs = []): array
@@ -58,7 +56,7 @@ class SequenceMatch extends BaseMatch
         return $matches;
     }
 
-    public static function findSequenceMatch(string $password, int $begin, int $end, int $delta, array &$matches)
+    public static function findSequenceMatch(string $password, int $begin, int $end, int $delta, array &$matches): void
     {
         if ($end - $begin > 1 || abs($delta) === 1) {
             if (abs($delta) > 0 && abs($delta) <= self::MAX_DELTA) {
@@ -100,10 +98,6 @@ class SequenceMatch extends BaseMatch
     }
 
     /**
-     * @param string $password
-     * @param int $begin
-     * @param int $end
-     * @param string $token
      * @param array $params An array with keys: [sequenceName, sequenceSpace, ascending].
      */
     public function __construct(string $password, int $begin, int $end, string $token, array $params = [])
@@ -121,7 +115,7 @@ class SequenceMatch extends BaseMatch
         $firstCharacter = mb_substr($this->token, 0, 1);
         $guesses = 0;
 
-        if (in_array($firstCharacter, array('a', 'A', 'z', 'Z', '0', '1', '9'), true)) {
+        if (in_array($firstCharacter, ['a', 'A', 'z', 'Z', '0', '1', '9'], true)) {
             $guesses += 4;  // lower guesses for obvious starting points
         } elseif (ctype_digit($firstCharacter)) {
             $guesses += 10; // digits

@@ -13,8 +13,6 @@ final class Bruteforce extends BaseMatch
     public $pattern = 'bruteforce';
 
     /**
-     * @param string $password
-     * @param array $userInputs
      * @return Bruteforce[]
      */
     public static function match(string $password, array $userInputs = []): array
@@ -39,7 +37,7 @@ final class Bruteforce extends BaseMatch
 
     public function getRawGuesses(): float
     {
-        $guesses = pow(self::BRUTEFORCE_CARDINALITY, mb_strlen($this->token));
+        $guesses = self::BRUTEFORCE_CARDINALITY ** mb_strlen($this->token);
         if ($guesses === INF) {
             return PHP_FLOAT_MAX;
         }

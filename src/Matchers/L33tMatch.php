@@ -25,9 +25,6 @@ class L33tMatch extends DictionaryMatch
     /**
      * Match occurences of l33t words in password to dictionary words.
      *
-     * @param string $password
-     * @param array $userInputs
-     * @param array $rankedDictionaries
      * @return L33tMatch[]
      */
     public static function match(string $password, array $userInputs = [], array $rankedDictionaries = []): array
@@ -82,10 +79,6 @@ class L33tMatch extends DictionaryMatch
     }
 
     /**
-     * @param string $password
-     * @param int $begin
-     * @param int $end
-     * @param string $token
      * @param array $params An array with keys: [sub, sub_display].
      */
     public function __construct(string $password, int $begin, int $end, string $token, array $params = [])
@@ -109,11 +102,6 @@ class L33tMatch extends DictionaryMatch
         return $feedback;
     }
 
-    /**
-     * @param string $string
-     * @param array  $map
-     * @return string
-     */
     protected static function translate(string $string, array $map): string
     {
         return str_replace(array_keys($map), array_values($map), $string);
@@ -219,10 +207,10 @@ class L33tMatch extends DictionaryMatch
         foreach ($this->sub as $substitution => $letter) {
             $characters = preg_split('//u', mb_strtolower($this->token), -1, PREG_SPLIT_NO_EMPTY);
 
-            $subbed = count(array_filter($characters, function ($character) use ($substitution) {
+            $subbed = count(array_filter($characters, function ($character) use ($substitution): bool {
                 return (string)$character === (string)$substitution;
             }));
-            $unsubbed = count(array_filter($characters, function ($character) use ($letter) {
+            $unsubbed = count(array_filter($characters, function ($character) use ($letter): bool {
                 return (string)$character === (string)$letter;
             }));
 

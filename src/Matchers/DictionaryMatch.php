@@ -38,9 +38,6 @@ class DictionaryMatch extends BaseMatch
     /**
      * Match occurrences of dictionary words in password.
      *
-     * @param string $password
-     * @param array $userInputs
-     * @param array $rankedDictionaries
      * @return DictionaryMatch[]
      */
     public static function match(string $password, array $userInputs = [], array $rankedDictionaries = []): array
@@ -71,10 +68,6 @@ class DictionaryMatch extends BaseMatch
     }
 
     /**
-     * @param string $password
-     * @param int $begin
-     * @param int $end
-     * @param string $token
      * @param array $params An array with keys: [dictionary_name, matched_word, rank].
      */
     public function __construct(string $password, int $begin, int $end, string $token, array $params = [])
@@ -116,12 +109,13 @@ class DictionaryMatch extends BaseMatch
                 if ($isSoleMatch && !$this->l33t && !$this->reversed) {
                     if ($this->rank <= 10) {
                         return 'This is a top-10 common password';
-                    } elseif ($this->rank <= 100) {
-                        return 'This is a top-100 common password';
-                    } else {
-                        return 'This is a very common password';
                     }
-                } elseif ($this->getGuessesLog10() <= 4) {
+                    if ($this->rank <= 100) {
+                        return 'This is a top-100 common password';
+                    }
+                    return 'This is a very common password';
+                }
+                if ($this->getGuessesLog10() <= 4) {
                     return 'This is similar to a commonly used password';
                 }
                 break;
@@ -135,9 +129,8 @@ class DictionaryMatch extends BaseMatch
             case 'female_names':
                 if ($isSoleMatch) {
                     return 'Names and surnames by themselves are easy to guess';
-                } else {
-                    return 'Common names and surnames are easy to guess';
                 }
+                return 'Common names and surnames are easy to guess';
         }
 
         return '';
@@ -145,10 +138,6 @@ class DictionaryMatch extends BaseMatch
 
     /**
      * Attempts to find the provided password (as well as all possible substrings) in a dictionary.
-     *
-     * @param string $password
-     * @param array $dict
-     * @return array
      */
     protected static function dictionaryMatch(string $password, array $dict): array
     {
@@ -178,13 +167,11 @@ class DictionaryMatch extends BaseMatch
 
     /**
      * Load ranked frequency dictionaries.
-     *
-     * @return array
      */
     protected static function getRankedDictionaries(): array
     {
         if (empty(self::$rankedDictionaries)) {
-            $json = file_get_contents(dirname(__FILE__) . '/frequency_lists.json');
+            $json = file_get_contents(__DIR__ . '/frequency_lists.json');
             $data = json_decode($json, true);
 
             $rankedLists = [];
@@ -200,9 +187,8 @@ class DictionaryMatch extends BaseMatch
     protected function getRawGuesses(): float
     {
         $guesses = $this->rank;
-        $guesses *= $this->getUppercaseVariations();
 
-        return $guesses;
+        return $guesses * $this->getUppercaseVariations();
     }
 
     protected function getUppercaseVariations(): float
@@ -215,7 +201,7 @@ class DictionaryMatch extends BaseMatch
         // a capitalized word is the most common capitalization scheme,
         // so it only doubles the search space (uncapitalized + capitalized).
         // allcaps and end-capitalized are common enough too, underestimate as 2x factor to be safe.
-        foreach (array(self::START_UPPER, self::END_UPPER, self::ALL_UPPER) as $regex) {
+        foreach ([self::START_UPPER, self::END_UPPER, self::ALL_UPPER] as $regex) {
             if (preg_match($regex, $word)) {
                 return 2;
             }

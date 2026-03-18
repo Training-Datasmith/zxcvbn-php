@@ -72,8 +72,6 @@ class DateMatch extends BaseMatch
     /**
      * Match occurences of dates in a password
      *
-     * @param string $password
-     * @param array $userInputs
      * @return DateMatch[]
      */
     public static function match(string $password, array $userInputs = []): array
@@ -122,10 +120,6 @@ class DateMatch extends BaseMatch
     }
 
     /**
-     * @param string $password
-     * @param int $begin
-     * @param int $end
-     * @param string $token
      * @param array $params An array with keys: [day, month, year, separator].
      */
     public function __construct(string $password, int $begin, int $end, string $token, array $params)
@@ -140,9 +134,7 @@ class DateMatch extends BaseMatch
     /**
      * Find dates with separators in a password.
      *
-     * @param string $password
      *
-     * @return array
      */
     protected static function datesWithSeparators(string $password): array
     {
@@ -186,9 +178,7 @@ class DateMatch extends BaseMatch
     /**
      * Find dates without separators in a password.
      *
-     * @param string $password
      *
-     * @return array
      */
     protected static function datesWithoutSeparators(string $password): array
     {
@@ -259,7 +249,6 @@ class DateMatch extends BaseMatch
     }
 
     /**
-     * @param array $candidate
      * @return int Returns the number of years between the detected year and the current year for a candidate.
      */
     protected static function getDistanceForMatchCandidate(array $candidate): int

@@ -35,9 +35,6 @@ class SpatialMatch extends BaseMatch
     /**
      * Match spatial patterns based on keyboard layouts (e.g. qwerty, dvorak, keypad).
      *
-     * @param string $password
-     * @param array $userInputs
-     * @param array $graphs
      * @return SpatialMatch[]
      */
     public static function match(string $password, array $userInputs = [], array $graphs = []): array
@@ -76,10 +73,6 @@ class SpatialMatch extends BaseMatch
     }
 
     /**
-     * @param string $password
-     * @param int $begin
-     * @param int $end
-     * @param string $token
      * @param array $params An array with keys: [graph (required), shifted_count, turns].
      */
     public function __construct(string $password, int $begin, int $end, string $token, array $params = [])
@@ -94,10 +87,6 @@ class SpatialMatch extends BaseMatch
 
     /**
      * Match spatial patterns in a adjacency graph.
-     * @param string $password
-     * @param array $graph
-     * @param string $graphName
-     * @return array
      */
     protected static function graphMatch(string $password, array $graph, string $graphName): array
     {
@@ -184,10 +173,7 @@ class SpatialMatch extends BaseMatch
     /**
      * Get the index of a string a character first
      *
-     * @param string $string
-     * @param string $char
      *
-     * @return int
      */
     protected static function indexOf(string $string, string $char): int
     {
@@ -197,13 +183,11 @@ class SpatialMatch extends BaseMatch
 
     /**
      * Load adjacency graphs.
-     *
-     * @return array
      */
     public static function getAdjacencyGraphs(): array
     {
         if (empty(self::$adjacencyGraphs)) {
-            $json = file_get_contents(dirname(__FILE__) . '/adjacency_graphs.json');
+            $json = file_get_contents(__DIR__ . '/adjacency_graphs.json');
             $data = json_decode($json, true);
 
             // This seems pointless, but the data file is not guaranteed to be in any particular order.
@@ -239,7 +223,7 @@ class SpatialMatch extends BaseMatch
         for ($i = 2; $i <= $length; $i++) {
             $possibleTurns = min($turns, $i - 1);
             for ($j = 1; $j <= $possibleTurns; $j++) {
-                $guesses += Binomial::binom($i - 1, $j - 1) * $startingPosition * pow($averageDegree, $j);
+                $guesses += Binomial::binom($i - 1, $j - 1) * $startingPosition * $averageDegree ** $j;
             }
         }
 

@@ -15,9 +15,7 @@ use ZxcvbnPhp\Matchers\MatchInterface;
 class Feedback
 {
     /**
-     * @param int $score
      * @param MatchInterface[] $sequence
-     * @return array
      */
     public function getFeedback(int $score, array $sequence): array
     {

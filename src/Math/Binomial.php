@@ -10,19 +10,15 @@ use ZxcvbnPhp\Math\Impl\BinomialProviderInt64;
 
 class Binomial
 {
-    private static $provider = null;
+    private static $provider;
 
     private function __construct()
     {
-        throw new \LogicException(__CLASS__ . " is static");
+        throw new \LogicException(self::class . " is static");
     }
 
     /**
      * Calculate binomial coefficient (n choose k).
-     *
-     * @param int $n
-     * @param int $k
-     * @return float
      */
     public static function binom(int $n, int $k): float
     {

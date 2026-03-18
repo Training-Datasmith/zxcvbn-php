@@ -70,10 +70,6 @@ class Matcher
      *
      * This function taken from https://github.com/vanderlee/PHP-stable-sort-functions
      * Copyright © 2015-2018 Martijn van der Lee (http://martijn.vanderlee.com). MIT License applies.
-     *
-     * @param array $array
-     * @param callable $value_compare_func
-     * @return bool
      */
     public static function usortStable(array &$array, callable $value_compare_func): bool
     {
@@ -81,7 +77,7 @@ class Matcher
         foreach ($array as &$item) {
             $item = [$index++, $item];
         }
-        $result = usort($array, function ($a, $b) use ($value_compare_func) {
+        $result = usort($array, function (array $a, array $b) use ($value_compare_func) {
             $result = $value_compare_func($a[1], $b[1]);
             return $result == 0 ? $a[0] - $b[0] : $result;
         });

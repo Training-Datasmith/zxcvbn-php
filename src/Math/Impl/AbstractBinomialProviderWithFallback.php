@@ -9,7 +9,7 @@ abstract class AbstractBinomialProviderWithFallback extends AbstractBinomialProv
     /**
      * @var AbstractBinomialProvider|null
      */
-    private $fallback = null;
+    private $fallback;
 
     protected function calculate(int $n, int $k): float
     {

@@ -56,9 +56,7 @@ class Scorer
      *    sequences before length-3. assuming at minimum D guesses per pattern type,
      *    D^(l-1) approximates Sum(D^i for i in [1..l-1]
      *
-     * @param string $password
      * @param MatchInterface[] $matches
-     * @param bool $excludeAdditive
      * @return array Returns an array with these keys: [password, guesses, guesses_log10, sequence]
      */
     public function getMostGuessableMatchSequence(string $password, array $matches, bool $excludeAdditive = false): array
@@ -135,8 +133,6 @@ class Scorer
     /**
      * helper: considers whether a length-l sequence ending at match m is better (fewer guesses)
      * than previously encountered sequences, updating state if so.
-     * @param BaseMatch $match
-     * @param int $length
      */
     protected function update(BaseMatch $match, int $length): void
     {
@@ -156,7 +152,7 @@ class Scorer
         // calculate the minimization func
         $g = $this->factorial($length) * $pi;
         if (!$this->excludeAdditive) {
-            $g += pow(self::MIN_GUESSES_BEFORE_GROWING_SEQUENCE, $length - 1);
+            $g += self::MIN_GUESSES_BEFORE_GROWING_SEQUENCE ** ($length - 1);
         }
 
         // update state if new best.
@@ -184,7 +180,6 @@ class Scorer
 
     /**
      * helper: evaluate bruteforce matches ending at k
-     * @param int $end
      */
     protected function bruteforceUpdate(int $end): void
     {
@@ -215,9 +210,6 @@ class Scorer
 
     /**
      * helper: make bruteforce match objects spanning i to j, inclusive.
-     * @param int $begin
-     * @param int $end
-     * @return Bruteforce
      */
     protected function makeBruteforceMatch(int $begin, int $end): Bruteforce
     {
@@ -226,7 +218,6 @@ class Scorer
 
     /**
      * helper: step backwards through optimal.m starting at the end, constructing the final optimal match sequence.
-     * @param int $n
      * @return MatchInterface[]
      */
     protected function unwind(int $n): array
@@ -257,8 +248,6 @@ class Scorer
 
     /**
      * unoptimized, called only on small n
-     * @param int $n
-     * @return int
      */
     protected function factorial(int $n): float
     {

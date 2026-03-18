@@ -31,8 +31,6 @@ class RepeatMatch extends BaseMatch
     /**
      * Match 3 or more repeated characters.
      *
-     * @param string $password
-     * @param array $userInputs
      * @return RepeatMatch[]
      */
     public static function match(string $password, array $userInputs = []): array
@@ -103,10 +101,6 @@ class RepeatMatch extends BaseMatch
     }
 
     /**
-     * @param string $password
-     * @param int $begin
-     * @param int $end
-     * @param string $token
      * @param array $params An array with keys: [repeated_char, base_guesses, base_matches, repeat_count].
      */
     public function __construct(string $password, int $begin, int $end, string $token, array $params = [])
