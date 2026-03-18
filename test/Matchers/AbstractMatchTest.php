@@ -39,7 +39,7 @@ abstract class AbstractMatchTest extends TestCase
                 $output[] = [
                     $prefix . $pattern . $suffix,
                     $i,
-                    $j
+                    $j,
                 ];
             }
         }
@@ -73,7 +73,7 @@ abstract class AbstractMatchTest extends TestCase
         $this->assertSame(
             count($patterns),
             count($matches),
-            $prefix . ": matches.length == " . count($patterns)
+            $prefix . ': matches.length == ' . count($patterns)
         );
 
         foreach ($patterns as $k => $pattern) {

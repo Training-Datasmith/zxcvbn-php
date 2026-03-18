@@ -67,8 +67,8 @@ class SpatialMatch extends BaseMatch
         return [
             'warning' => $warning,
             'suggestions' => [
-                'Use a longer keyboard pattern with more turns'
-            ]
+                'Use a longer keyboard pattern with more turns',
+            ],
         ];
     }
 
@@ -157,7 +157,7 @@ class SpatialMatch extends BaseMatch
                             'end' => $j - 1,
                             'token' => mb_substr($password, $i, $j - $i),
                             'turns' => $turns,
-                            'shifted_count' => $shiftedCount
+                            'shifted_count' => $shiftedCount,
                         ];
                     }
                     // ...and then start a new search for the rest of the password.

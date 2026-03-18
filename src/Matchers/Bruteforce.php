@@ -22,16 +22,15 @@ final class Bruteforce extends BaseMatch
         return [$match];
     }
 
-
     /**
      * @return array{'warning': string, "suggestions": string[]}
      */
     public function getFeedback(bool $isSoleMatch): array
     {
         return [
-            'warning' => "",
+            'warning' => '',
             'suggestions' => [
-            ]
+            ],
         ];
     }
 

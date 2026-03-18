@@ -22,7 +22,7 @@ class ReverseDictionaryTest extends AbstractMatchTest
         $password = '0123456789';
 
         $this->checkMatches(
-            "matches against reversed words in custom dictionary",
+            'matches against reversed words in custom dictionary',
             ReverseDictionaryMatch::match($password, [], self::$testDicts),
             'dictionary',
             ['123', '456'],
@@ -40,7 +40,7 @@ class ReverseDictionaryTest extends AbstractMatchTest
     {
         $match = new ReverseDictionaryMatch('aaa', 0, 2, 'aaa', ['rank' => 32]);
         $expected = 32.0 * 2;     // rank * reversed
-        $this->assertSame($expected, $match->getGuesses(), "guesses are doubled when word is reversed");
+        $this->assertSame($expected, $match->getGuesses(), 'guesses are doubled when word is reversed');
     }
 
     public function testFeedback()
@@ -60,7 +60,7 @@ class ReverseDictionaryTest extends AbstractMatchTest
         $this->assertContains(
             'Reversed words aren\'t much harder to guess',
             $feedback['suggestions'],
-            "reverse dictionary match gives correct suggestion"
+            'reverse dictionary match gives correct suggestion'
         );
     }
 
@@ -92,7 +92,7 @@ class ReverseDictionaryTest extends AbstractMatchTest
         $this->assertSame(
             'A word by itself is easy to guess',
             $feedback['warning'],
-            "reverse dictionary match still gives warning for short token"
+            'reverse dictionary match still gives warning for short token'
         );
         $this->assertNotContains(
             'Reversed words aren\'t much harder to guess',

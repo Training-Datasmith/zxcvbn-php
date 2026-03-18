@@ -18,7 +18,7 @@ class TimeEstimator
             'online_throttling_100_per_hour' => $guesses / (100 / 3600),
             'online_no_throttling_10_per_second' => $guesses / 10,
             'offline_slow_hashing_1e4_per_second' => $guesses / 1e4,
-            'offline_fast_hashing_1e10_per_second' => $guesses / 1e10
+            'offline_fast_hashing_1e10_per_second' => $guesses / 1e10,
         ];
 
         $crack_times_display = array_map(
@@ -29,7 +29,7 @@ class TimeEstimator
         return [
             'crack_times_seconds' => $crack_times_seconds,
             'crack_times_display' => $crack_times_display,
-            'score'               => $this->guessesToScore($guesses)
+            'score'               => $this->guessesToScore($guesses),
         ];
     }
 

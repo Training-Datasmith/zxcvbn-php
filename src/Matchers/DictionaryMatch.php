@@ -30,10 +30,10 @@ class DictionaryMatch extends BaseMatch
     /** @var array A cache of the frequency_lists json file */
     protected static $rankedDictionaries = [];
 
-    protected const START_UPPER = "/^[A-Z][^A-Z]+$/u";
-    protected const END_UPPER = "/^[^A-Z]+[A-Z]$/u";
-    protected const ALL_UPPER = "/^[^a-z]+$/u";
-    protected const ALL_LOWER = "/^[^A-Z]+$/u";
+    protected const START_UPPER = '/^[A-Z][^A-Z]+$/u';
+    protected const END_UPPER = '/^[^A-Z]+[A-Z]$/u';
+    protected const ALL_UPPER = '/^[^a-z]+$/u';
+    protected const ALL_LOWER = '/^[^A-Z]+$/u';
 
     /**
      * Match occurrences of dictionary words in password.
@@ -90,13 +90,13 @@ class DictionaryMatch extends BaseMatch
 
         $feedback = [
             'warning' => $this->getFeedbackWarning($isSoleMatch),
-            'suggestions' => []
+            'suggestions' => [],
         ];
 
         if (preg_match($startUpper, $this->token)) {
             $feedback['suggestions'][] = "Capitalization doesn't help very much";
         } elseif (preg_match($allUpper, $this->token) && mb_strtolower($this->token) != $this->token) {
-            $feedback['suggestions'][] = "All-uppercase is almost as easy to guess as all-lowercase";
+            $feedback['suggestions'][] = 'All-uppercase is almost as easy to guess as all-lowercase';
         }
 
         return $feedback;

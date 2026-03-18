@@ -6,7 +6,6 @@ namespace ZxcvbnPhp\Test\Matchers;
 
 use ReflectionClass;
 use ZxcvbnPhp\Matchers\L33tMatch;
-use ZxcvbnPhp\Matchers\BaseMatch;
 
 class L33tTest extends AbstractMatchTest
 {
@@ -34,16 +33,16 @@ class L33tTest extends AbstractMatchTest
             'abcdefgo123578!#$&*)]}>' => [] ,
             'a'     => [] ,
             '4'     => [
-                'a' => ['4']
+                'a' => ['4'],
             ],
             '4@'    => [
-                'a' => ['4', '@']
+                'a' => ['4', '@'],
             ],
             '4({60' => [
                 'a' => ['4'],
                 'c'   => ['(','{'],
                 'g' => ['6'],
-                'o' => ['0']
+                'o' => ['0'],
             ],
         ];
 
@@ -51,7 +50,7 @@ class L33tTest extends AbstractMatchTest
             $this->assertSame(
                 $expected,
                 static::callProtectedMethod('getL33tSubtable', [$pw]),
-                "reduces l33t table to only the substitutions that a password might be employing"
+                'reduces l33t table to only the substitutions that a password might be employing'
             );
         }
     }
@@ -61,7 +60,7 @@ class L33tTest extends AbstractMatchTest
         $cases = [
             [
                 [],
-                [[]]
+                [[]],
             ],
             [
                 ['a' => ['@']],     // subtable
@@ -71,15 +70,15 @@ class L33tTest extends AbstractMatchTest
                 [['@' => 'a'], ['4' => 'a']] ],
             [
                 ['a' => ['@', '4'], 'c' => ['(']],
-                [['@' => 'a', '(' => 'c'], ['4' => 'a', '(' => 'c']]
-            ]
+                [['@' => 'a', '(' => 'c'], ['4' => 'a', '(' => 'c']],
+            ],
         ];
 
         foreach ($cases as $case) {
             $this->assertSame(
                 $case[1],
                 static::callProtectedMethod('getL33tSubstitutions', [$case[0]]),
-                "enumerates the different sets of l33t substitutions a password might be using"
+                'enumerates the different sets of l33t substitutions a password might be using'
             );
         }
     }
@@ -130,7 +129,7 @@ class L33tTest extends AbstractMatchTest
                 'dictionary_name' => 'words',
                 'rank'            => 3,
                 'ij'              => [0, 7],
-                'sub'             => ['4' => 'a']
+                'sub'             => ['4' => 'a'],
             ],
             [
                 'password'        => 'p@ssw0rd',
@@ -139,7 +138,7 @@ class L33tTest extends AbstractMatchTest
                 'dictionary_name' => 'words',
                 'rank'            => 3,
                 'ij'              => [0, 7],
-                'sub'             => ['@' => 'a', '0' => 'o']
+                'sub'             => ['@' => 'a', '0' => 'o'],
             ],
             [
                 'password'        => 'aSdfO{G0asDfO',
@@ -148,7 +147,7 @@ class L33tTest extends AbstractMatchTest
                 'dictionary_name' => 'words2',
                 'rank'            => 1,
                 'ij'              => [5, 7],
-                'sub'             => ['{' => 'c', '0' => 'o']
+                'sub'             => ['{' => 'c', '0' => 'o'],
             ],
         ];
     }
@@ -166,7 +165,7 @@ class L33tTest extends AbstractMatchTest
     public function testCommonL33tSubstitutions(string $password, string $pattern, string $word, string $dictionary, int $rank, array $ij, array $substitutions): void
     {
         $this->checkMatches(
-            "matches against common l33t substitutions",
+            'matches against common l33t substitutions',
             MockL33tMatch::match($password),
             'dictionary',
             [$pattern],
@@ -176,7 +175,7 @@ class L33tTest extends AbstractMatchTest
                 'sub' => [$substitutions],
                 'matchedWord' => [$word],
                 'rank' => [$rank],
-                'dictionaryName' => [$dictionary]
+                'dictionaryName' => [$dictionary],
             ]
         );
     }
@@ -184,7 +183,7 @@ class L33tTest extends AbstractMatchTest
     public function testOverlappingL33tPatterns(): void
     {
         $this->checkMatches(
-            "matches against overlapping l33t patterns",
+            'matches against overlapping l33t patterns',
             MockL33tMatch::match('@a(go{G0'),
             'dictionary',
             ['@a(', '(go', '{G0'],
@@ -194,7 +193,7 @@ class L33tTest extends AbstractMatchTest
                 'sub'            => [
                                         ['@' => 'a', '(' => 'c'],
                                         ['(' => 'c'],
-                                        ['{' => 'c', '0' => 'o']
+                                        ['{' => 'c', '0' => 'o'],
                                     ],
                 'matchedWord'    => ['aac', 'cgo', 'cgo'],
                 'rank'           => [1, 1, 1],
@@ -248,7 +247,7 @@ class L33tTest extends AbstractMatchTest
     public function testSubstitutionOfCharacterL()
     {
         $this->checkMatches(
-            "matches against overlapping l33t patterns",
+            'matches against overlapping l33t patterns',
             L33tMatch::match('marie1'),
             'dictionary',
             ['marie1', 'arie1'],
@@ -265,23 +264,23 @@ class L33tTest extends AbstractMatchTest
     {
         $match = new L33tMatch('aaa@@@', 0, 5, 'aaa@@@', [
             'rank' => 32,
-            'sub' => array('@' => 'a')
+            'sub' => ['@' => 'a'],
         ]);
         $expected = 32.0 * 41;    // rank * l33t variations
-        $this->assertSame($expected, $match->getGuesses(), "guesses are doubled when word is reversed");
+        $this->assertSame($expected, $match->getGuesses(), 'guesses are doubled when word is reversed');
     }
 
     public function testGuessesL33tAndUppercased()
     {
         $match = new L33tMatch('AaA@@@', 0, 5, 'AaA@@@', [
             'rank' => 32,
-            'sub' => ['@' => 'a']
+            'sub' => ['@' => 'a'],
         ]);
         $expected = 32.0 * 41 * 3;    // rank * l33t variations * uppercase variations
         $this->assertSame(
             $expected,
             $match->getGuesses(),
-            "extra guesses are added for both capitalization and common l33t substitutions"
+            'extra guesses are added for both capitalization and common l33t substitutions'
         );
     }
 
@@ -356,7 +355,7 @@ class L33tTest extends AbstractMatchTest
         $this->assertContains(
             'Predictable substitutions like \'@\' instead of \'a\' don\'t help very much',
             $feedback['suggestions'],
-            "l33t match gives correct suggestion"
+            'l33t match gives correct suggestion'
         );
     }
 

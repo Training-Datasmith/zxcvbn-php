@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ZxcvbnPhp;
 
-use ZxcvbnPhp\Matchers\Bruteforce;
 use ZxcvbnPhp\Matchers\BaseMatch;
+use ZxcvbnPhp\Matchers\Bruteforce;
 use ZxcvbnPhp\Matchers\MatchInterface;
 
 /**
@@ -111,7 +111,6 @@ class Scorer
             }
             $this->bruteforceUpdate($k);
         }
-
 
         if ($length === 0) {
             $guesses = 1.0;

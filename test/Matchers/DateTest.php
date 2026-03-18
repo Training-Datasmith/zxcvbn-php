@@ -74,7 +74,7 @@ class DateTest extends AbstractMatchTest
     {
         $password = '111504';
         $this->checkMatches(
-            "matches the date with year closest to REFERENCE_YEAR when ambiguous",
+            'matches the date with year closest to REFERENCE_YEAR when ambiguous',
             DateMatch::match($password),
             'date',
             [ $password ],
@@ -94,7 +94,7 @@ class DateTest extends AbstractMatchTest
             [1,  1,  1999],
             [11, 8,  2000],
             [9,  12, 2005],
-            [22, 11, 1551]
+            [22, 11, 1551],
         ];
     }
 
@@ -144,9 +144,9 @@ class DateTest extends AbstractMatchTest
 
     public function testMatchesZeroPaddedDates()
     {
-        $password = "02/02/02";
+        $password = '02/02/02';
         $this->checkMatches(
-            "matches zero-padded dates",
+            'matches zero-padded dates',
             DateMatch::match($password),
             'date',
             [ $password ],
@@ -162,9 +162,9 @@ class DateTest extends AbstractMatchTest
 
     public function testFullDateMatched()
     {
-        $password = "2018-01-20";
+        $password = '2018-01-20';
         $this->checkMatches(
-            "matches full date and not just year",
+            'matches full date and not just year',
             DateMatch::match($password),
             'date',
             [ $password ],
@@ -186,7 +186,7 @@ class DateTest extends AbstractMatchTest
 
         foreach ($this->generatePasswords($pattern, $prefixes, $suffixes) as list($password, $i, $j)) {
             $this->checkMatches(
-                "matches embedded dates",
+                'matches embedded dates',
                 DateMatch::match($password),
                 'date',
                 [$pattern],
@@ -194,7 +194,7 @@ class DateTest extends AbstractMatchTest
                 [
                     'year'  => [1991],
                     'month' => [1],
-                    'day'   => [1]
+                    'day'   => [1],
                 ]
             );
         }
@@ -202,9 +202,9 @@ class DateTest extends AbstractMatchTest
 
     public function testMatchesOverlappingDates()
     {
-        $password = "12/20/1991.12.20";
+        $password = '12/20/1991.12.20';
         $this->checkMatches(
-            "matches overlapping dates",
+            'matches overlapping dates',
             DateMatch::match($password),
             'date',
             [ '12/20/1991', '1991.12.20' ],
@@ -220,9 +220,9 @@ class DateTest extends AbstractMatchTest
 
     public function testMatchesDatesPadded()
     {
-        $password = "912/20/919";
+        $password = '912/20/919';
         $this->checkMatches(
-            "matches dates padded by non-ambiguous digits",
+            'matches dates padded by non-ambiguous digits',
             DateMatch::match($password),
             'date',
             [ '12/20/91' ],
@@ -238,12 +238,12 @@ class DateTest extends AbstractMatchTest
 
     public function testReferenceYearImplementation()
     {
-        $this->assertSame((int)date('Y'), DateMatch::getReferenceYear(), "reference year implementation");
+        $this->assertSame((int)date('Y'), DateMatch::getReferenceYear(), 'reference year implementation');
     }
 
     public function testNonDateThatLooksLikeDate()
     {
-        $this->assertEmpty(DateMatch::match('30-31-00'), "no match on invalid date");
+        $this->assertEmpty(DateMatch::match('30-31-00'), 'no match on invalid date');
     }
 
     public function testGuessDistanceFromReferenceYear()
@@ -253,7 +253,7 @@ class DateTest extends AbstractMatchTest
             'separator' => '',
             'year' => 1923,
             'month' => 1,
-            'day' => 1
+            'day' => 1,
         ]);
 
         $expected = 365.0 * abs(DateMatch::getReferenceYear() - $match->year);
@@ -271,11 +271,11 @@ class DateTest extends AbstractMatchTest
             'separator' => '',
             'year' => 2010,
             'month' => 1,
-            'day' => 1
+            'day' => 1,
         ]);
 
         $expected = 7300.0; // 365 * DateMatch::MIN_YEAR_SPACE;
-        $this->assertSame($expected, $match->getGuesses(), "recent years assume MIN_YEAR_SPACE");
+        $this->assertSame($expected, $match->getGuesses(), 'recent years assume MIN_YEAR_SPACE');
     }
 
     public function testGuessWithSeparator()
@@ -285,11 +285,11 @@ class DateTest extends AbstractMatchTest
             'separator' => '/',
             'year' => 2010,
             'month' => 1,
-            'day' => 1
+            'day' => 1,
         ]);
 
         $expected = 29200.0; // 365 * DateMatch::MIN_YEAR_SPACE * 4;
-        $this->assertSame($expected, $match->getGuesses(), "extra guesses are added for separators");
+        $this->assertSame($expected, $match->getGuesses(), 'extra guesses are added for separators');
     }
 
     public function testFeedback()
@@ -306,12 +306,12 @@ class DateTest extends AbstractMatchTest
         $this->assertSame(
             'Dates are often easy to guess',
             $feedback['warning'],
-            "date match gives correct warning"
+            'date match gives correct warning'
         );
         $this->assertContains(
             'Avoid dates and years that are associated with you',
             $feedback['suggestions'],
-            "date match gives correct suggestion"
+            'date match gives correct suggestion'
         );
     }
 }

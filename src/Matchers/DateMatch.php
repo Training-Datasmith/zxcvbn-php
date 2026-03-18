@@ -27,7 +27,7 @@ class DateMatch extends BaseMatch
         ],
         5 => [
             [1, 3],    # 1 11 91
-            [2, 3]     # 11 1 91
+            [2, 3],     # 11 1 91
         ],
         6 => [
             [1, 2],    # 1 1 1991
@@ -112,10 +112,10 @@ class DateMatch extends BaseMatch
     public function getFeedback(bool $isSoleMatch): array
     {
         return [
-            'warning' => "Dates are often easy to guess",
+            'warning' => 'Dates are often easy to guess',
             'suggestions' => [
-                'Avoid dates and years that are associated with you'
-            ]
+                'Avoid dates and years that are associated with you',
+            ],
         ];
     }
 
@@ -153,7 +153,7 @@ class DateMatch extends BaseMatch
                 $date = static::checkDate([
                     (int) $captures[1],
                     (int) $captures[3],
-                    (int) $captures[4]
+                    (int) $captures[4],
                 ]);
 
                 if ($date === false) {
@@ -240,7 +240,7 @@ class DateMatch extends BaseMatch
                     'separator' => '',
                     'day' => $day,
                     'month' => $month,
-                    'year' => $year
+                    'year' => $year,
                 ];
             }
         }
@@ -348,7 +348,7 @@ class DateMatch extends BaseMatch
             if ($d >= 1 && $d <= 31 && $m >= 1 && $m <= 12) {
                 return [
                     'day'   => $d,
-                    'month' => $m
+                    'month' => $m,
                 ];
             }
         }

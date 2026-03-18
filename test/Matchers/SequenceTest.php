@@ -27,7 +27,7 @@ class SequenceTest extends AbstractMatchTest
     public function testShortPassword($password)
     {
         $matches = SequenceMatch::match($password);
-        $this->assertEmpty($matches, "doesn't match length-" . strlen($password) . " sequences");
+        $this->assertEmpty($matches, "doesn't match length-" . strlen($password) . ' sequences');
     }
 
     public function testNonSequence()
@@ -42,7 +42,7 @@ class SequenceTest extends AbstractMatchTest
         $password = 'abcbabc';
 
         $this->checkMatches(
-            "matches overlapping patterns",
+            'matches overlapping patterns',
             SequenceMatch::match($password),
             'sequence',
             ['abc', 'cba', 'abc'],
@@ -61,7 +61,7 @@ class SequenceTest extends AbstractMatchTest
 
         foreach ($this->generatePasswords($pattern, $prefixes, $suffixes) as list($password, $i, $j)) {
             $this->checkMatches(
-                "matches embedded sequence patterns",
+                'matches embedded sequence patterns',
                 SequenceMatch::match($password),
                 'sequence',
                 [$pattern],
@@ -89,7 +89,7 @@ class SequenceTest extends AbstractMatchTest
             ['wxyz',  'lower',  true],
             ['zxvt',  'lower',  false],
             ['0369',  'digits', true],
-            ['97531', 'digits', false]
+            ['97531', 'digits', false],
         ];
     }
 
@@ -102,7 +102,7 @@ class SequenceTest extends AbstractMatchTest
     public function testSequenceInformation($password, $name, $ascending)
     {
         $this->checkMatches(
-            "matches " . $password . " as a " . $name . " sequence",
+            'matches ' . $password . ' as a ' . $name . ' sequence',
             SequenceMatch::match($password),
             'sequence',
             [$password],
@@ -118,7 +118,7 @@ class SequenceTest extends AbstractMatchTest
     {
         $password = 'pass123wordZYX';
         $this->checkMatches(
-            "matches password with multiple sequences",
+            'matches password with multiple sequences',
             SequenceMatch::match($password),
             'sequence',
             ['123', 'ZYX'],
@@ -166,13 +166,13 @@ class SequenceTest extends AbstractMatchTest
 
     public function guessProvider()
     {
-        return array(
-            array('ab',   true,  4 * 2),        // obvious start * len-2
-            array('XYZ',  true,  26 * 3),       // base26 * len-3
-            array('4567', true,  10 * 4),       // base10 * len-4
-            array('7654', false, 10 * 4 * 2),   // base10 * len-4 * descending
-            array('ZYX',  false, 4 * 3 * 2),    // obvious start * len-3 * descending
-        );
+        return [
+            ['ab',   true,  4 * 2],        // obvious start * len-2
+            ['XYZ',  true,  26 * 3],       // base26 * len-3
+            ['4567', true,  10 * 4],       // base10 * len-4
+            ['7654', false, 10 * 4 * 2],   // base10 * len-4 * descending
+            ['ZYX',  false, 4 * 3 * 2],    // obvious start * len-3 * descending
+        ];
     }
 
     /**
@@ -200,12 +200,12 @@ class SequenceTest extends AbstractMatchTest
         $this->assertSame(
             'Sequences like abc or 6543 are easy to guess',
             $feedback['warning'],
-            "sequence gives correct warning"
+            'sequence gives correct warning'
         );
         $this->assertSame(
             ['Avoid sequences'],
             $feedback['suggestions'],
-            "sequence gives correct suggestion"
+            'sequence gives correct suggestion'
         );
     }
 }

@@ -23,7 +23,7 @@ class YearTest extends AbstractMatchTest
         return [
             ['1922'],
             ['2001'],
-            ['2017']
+            ['2017'],
         ];
     }
 
@@ -34,7 +34,7 @@ class YearTest extends AbstractMatchTest
     public function testRecentYears($password)
     {
         $this->checkMatches(
-            "matches recent year",
+            'matches recent year',
             YearMatch::match($password),
             'regex',
             [$password],
@@ -48,7 +48,7 @@ class YearTest extends AbstractMatchTest
         return [
             ['1420'],
             ['1899'],
-            ['2345']
+            ['2345'],
         ];
     }
 
@@ -59,7 +59,7 @@ class YearTest extends AbstractMatchTest
     public function testNonRecentYears($password)
     {
         $matches = YearMatch::match($password);
-        $this->assertEmpty($matches, "does not match non-recent year");
+        $this->assertEmpty($matches, 'does not match non-recent year');
     }
 
     public function testYearSurroundedByWords()
@@ -70,7 +70,7 @@ class YearTest extends AbstractMatchTest
 
         foreach ($this->generatePasswords($pattern, $prefixes, $suffixes) as list($password, $i, $j)) {
             $this->checkMatches(
-                "identifies years surrounded by words",
+                'identifies years surrounded by words',
                 YearMatch::match($password),
                 'regex',
                 [$pattern],
@@ -89,7 +89,7 @@ class YearTest extends AbstractMatchTest
     {
         $password = '419004';
         $this->checkMatches(
-            "matches year within other numbers",
+            'matches year within other numbers',
             YearMatch::match($password),
             'regex',
             ['1900'],
@@ -106,7 +106,7 @@ class YearTest extends AbstractMatchTest
         $this->assertSame(
             (float)(DateMatch::getReferenceYear() - (int)$token),
             $match->getGuesses(),
-            "guesses of |year - REFERENCE_YEAR| for past year matches"
+            'guesses of |year - REFERENCE_YEAR| for past year matches'
         );
     }
 
@@ -118,7 +118,7 @@ class YearTest extends AbstractMatchTest
         $this->assertSame(
             (float)((int)$token - DateMatch::getReferenceYear()),
             $match->getGuesses(),
-            "guesses of |year - REFERENCE_YEAR| for future year matches"
+            'guesses of |year - REFERENCE_YEAR| for future year matches'
         );
     }
 
@@ -130,7 +130,7 @@ class YearTest extends AbstractMatchTest
         $this->assertSame(
             20.0, // DateMatch::MIN_YEAR_SPACE
             $match->getGuesses(),
-            "guesses of MIN_YEAR_SPACE for a year close to REFERENCE_YEAR"
+            'guesses of MIN_YEAR_SPACE for a year close to REFERENCE_YEAR'
         );
     }
 
@@ -143,17 +143,17 @@ class YearTest extends AbstractMatchTest
         $this->assertSame(
             'Recent years are easy to guess',
             $feedback['warning'],
-            "year match gives correct warning"
+            'year match gives correct warning'
         );
         $this->assertContains(
             'Avoid recent years',
             $feedback['suggestions'],
-            "year match gives correct suggestion #1"
+            'year match gives correct suggestion #1'
         );
         $this->assertContains(
             'Avoid years that are associated with you',
             $feedback['suggestions'],
-            "year match gives correct suggestion #2"
+            'year match gives correct suggestion #2'
         );
     }
 }

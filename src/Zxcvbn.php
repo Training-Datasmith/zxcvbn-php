@@ -83,7 +83,7 @@ class Zxcvbn
             $attackTimes,
             [
                 'feedback'  => $feedback,
-                'calc_time' => microtime(true) - $timeStart
+                'calc_time' => microtime(true) - $timeStart,
             ]
         );
     }

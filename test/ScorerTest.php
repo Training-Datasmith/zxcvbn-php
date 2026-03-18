@@ -38,13 +38,13 @@ class ScorerTest extends TestCase
     public function testEmptyMatchSequence()
     {
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, []);
-        $this->assertSame(1, count($result['sequence']), "result.sequence.length == 1");
-        $this->assertSame(10000000001.0, $result['guesses'], "result.guesses == 10000000001");
+        $this->assertSame(1, count($result['sequence']), 'result.sequence.length == 1');
+        $this->assertSame(10000000001.0, $result['guesses'], 'result.guesses == 10000000001');
 
         $match = $result['sequence'][0];
         $this->assertSame('bruteforce', $match->pattern, "match.pattern == 'bruteforce'");
-        $this->assertSame(self::PASSWORD, $match->token, "match.token == " . self::PASSWORD);
-        $this->assertSame([0, 9], [$match->begin, $match->end], "[i, j] == [0, 9]");
+        $this->assertSame(self::PASSWORD, $match->token, 'match.token == ' . self::PASSWORD);
+        $this->assertSame([0, 9], [$match->begin, $match->end], '[i, j] == [0, 9]');
     }
 
     public function testMatchAndBruteforceWithPrefix()
@@ -52,13 +52,13 @@ class ScorerTest extends TestCase
         $match = new MockMatch(0, 5, 1);
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, [$match], true);
-        $this->assertSame(2, count($result['sequence']), "result.sequence.length == 2");
-        $this->assertSame($match, $result['sequence'][0], "first match is the provided match object");
+        $this->assertSame(2, count($result['sequence']), 'result.sequence.length == 2');
+        $this->assertSame($match, $result['sequence'][0], 'first match is the provided match object');
 
         $match1 = $result['sequence'][1];
 
-        $this->assertSame('bruteforce', $match1->pattern, "second match is bruteforce");
-        $this->assertSame([6, 9], [$match1->begin, $match1->end], "second match covers full suffix after first match");
+        $this->assertSame('bruteforce', $match1->pattern, 'second match is bruteforce');
+        $this->assertSame([6, 9], [$match1->begin, $match1->end], 'second match covers full suffix after first match');
     }
 
     public function testMatchAndBruteforceWithSuffix()
@@ -66,13 +66,13 @@ class ScorerTest extends TestCase
         $match = new MockMatch(3, 9, 1);
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, [$match], true);
-        $this->assertSame(2, count($result['sequence']), "result.sequence.length == 2");
-        $this->assertSame($match, $result['sequence'][1], "second match is the provided match object");
+        $this->assertSame(2, count($result['sequence']), 'result.sequence.length == 2');
+        $this->assertSame($match, $result['sequence'][1], 'second match is the provided match object');
 
         $match0 = $result['sequence'][0];
 
-        $this->assertSame('bruteforce', $match0->pattern, "first match is bruteforce");
-        $this->assertSame([0, 2], [$match0->begin, $match0->end], "first match covers full prefix before second match");
+        $this->assertSame('bruteforce', $match0->pattern, 'first match is bruteforce');
+        $this->assertSame([0, 2], [$match0->begin, $match0->end], 'first match covers full prefix before second match');
     }
 
     public function testMatchAndBruteforceWithInfix()
@@ -80,16 +80,16 @@ class ScorerTest extends TestCase
         $match = new MockMatch(1, 8, 1);
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, [$match], true);
-        $this->assertSame(3, count($result['sequence']), "result.sequence.length == 3");
+        $this->assertSame(3, count($result['sequence']), 'result.sequence.length == 3');
 
         $match0 = $result['sequence'][0];
         $match2 = $result['sequence'][2];
 
-        $this->assertSame($match, $result['sequence'][1], "middle match is the provided match object");
-        $this->assertSame('bruteforce', $match0->pattern, "first match is bruteforce");
-        $this->assertSame('bruteforce', $match2->pattern, "third match is bruteforce");
-        $this->assertSame([0, 0], [$match0->begin, $match0->end], "first match covers full prefix before second match");
-        $this->assertSame([9, 9], [$match2->begin, $match2->end], "third match covers full suffix after second match");
+        $this->assertSame($match, $result['sequence'][1], 'middle match is the provided match object');
+        $this->assertSame('bruteforce', $match0->pattern, 'first match is bruteforce');
+        $this->assertSame('bruteforce', $match2->pattern, 'third match is bruteforce');
+        $this->assertSame([0, 0], [$match0->begin, $match0->end], 'first match covers full prefix before second match');
+        $this->assertSame([9, 9], [$match2->begin, $match2->end], 'third match covers full suffix after second match');
     }
 
     public function testBasicGuesses()
@@ -100,8 +100,8 @@ class ScorerTest extends TestCase
         ];
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, $matches, true);
-        $this->assertSame(1, count($result['sequence']), "result.sequence.length == 1");
-        $this->assertSame($matches[0], $result['sequence'][0], "result.sequence[0] == m0");
+        $this->assertSame(1, count($result['sequence']), 'result.sequence.length == 1');
+        $this->assertSame($matches[0], $result['sequence'][0], 'result.sequence[0] == m0');
     }
 
     public function testChoosesLowerGuessesMatchesForSameSpan()
@@ -112,8 +112,8 @@ class ScorerTest extends TestCase
         ];
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, $matches, true);
-        $this->assertSame(1, count($result['sequence']), "result.sequence.length == 1");
-        $this->assertSame($matches[0], $result['sequence'][0], "result.sequence[0] == m0");
+        $this->assertSame(1, count($result['sequence']), 'result.sequence.length == 1');
+        $this->assertSame($matches[0], $result['sequence'][0], 'result.sequence[0] == m0');
     }
 
     public function testChoosesLowerGuessesMatchesForSameSpanReversedOrder()
@@ -124,8 +124,8 @@ class ScorerTest extends TestCase
         ];
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, $matches, true);
-        $this->assertSame(1, count($result['sequence']), "result.sequence.length == 1");
-        $this->assertSame($matches[1], $result['sequence'][0], "result.sequence[0] == m1");
+        $this->assertSame(1, count($result['sequence']), 'result.sequence.length == 1');
+        $this->assertSame($matches[1], $result['sequence'][0], 'result.sequence[0] == m1');
     }
 
     public function testChoosesSupersetMatchWhenApplicable()
@@ -137,8 +137,8 @@ class ScorerTest extends TestCase
         ];
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, $matches, true);
-        $this->assertSame(3.0, $result['guesses'], "total guesses == 3");
-        $this->assertSame([$matches[0]], $result['sequence'], "sequence is [m0]");
+        $this->assertSame(3.0, $result['guesses'], 'total guesses == 3');
+        $this->assertSame([$matches[0]], $result['sequence'], 'sequence is [m0]');
     }
 
     public function testChoosesSubsetMatchesWhenApplicable()
@@ -150,7 +150,7 @@ class ScorerTest extends TestCase
         ];
 
         $result = $this->scorer->getMostGuessableMatchSequence(self::PASSWORD, $matches, true);
-        $this->assertSame(4.0, $result['guesses'], "total guesses == 4");
-        $this->assertSame([$matches[1], $matches[2]], $result['sequence'], "sequence is [m1, m2]");
+        $this->assertSame(4.0, $result['guesses'], 'total guesses == 4');
+        $this->assertSame([$matches[1], $matches[2]], $result['sequence'], 'sequence is [m1, m2]');
     }
 }
