@@ -10,22 +10,15 @@ namespace Zxcvbn_Php;
  */
 class Zxcvbn
 {
-    /**
-     * @var
-     */
+    /** @var \Zxcvbn_Php\Matcher Runs all registered matchers against a password */
     protected $matcher;
-    /**
-     * @var
-     */
+    /** @var \Zxcvbn_Php\Scorer Determines the minimum-guesses match sequence */
     protected $scorer;
-    /**
-     * @var
-     */
+    /** @var \Zxcvbn_Php\Time_Estimator Converts guesses to human-readable crack times */
     protected $time_estimator;
-    /**
-     * @var
-     */
+    /** @var \Zxcvbn_Php\Feedback Produces user-facing warning and suggestion strings */
     protected $feedback;
+
     public function __construct()
     {
         $this->matcher = new \Zxcvbn_Php\Matcher();
@@ -33,6 +26,18 @@ class Zxcvbn
         $this->time_estimator = new \Zxcvbn_Php\Time_Estimator();
         $this->feedback = new \Zxcvbn_Php\Feedback();
     }
+
+    /**
+     * Register a custom matcher class to run alongside the built-in matchers.
+     *
+     * The class must implement {@see \Zxcvbn_Php\Matchers\Match_Interface}.
+     *
+     * @param string $class_name Fully-qualified class name implementing Match_Interface
+     *
+     * @return self Fluent interface — allows chaining: (new Zxcvbn)->add_matcher(Foo::class)->password_strength(...)
+     *
+     * @throws \InvalidArgumentException if the class does not implement Match_Interface
+     */
     public function add_matcher(string $class_name): self
     {
         $this->matcher->add_matcher($class_name);

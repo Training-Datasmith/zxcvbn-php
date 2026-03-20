@@ -11,12 +11,41 @@ namespace Zxcvbn_Php;
  */
 class Time_Estimator
 {
+    /**
+     * Estimate crack times for common attack scenarios and assign an overall score.
+     *
+     * @param float $guesses Number of guesses required (from Scorer)
+     *
+     * @return array{
+     *   crack_times_seconds: array<string, float>,
+     *   crack_times_display: array<string, string>,
+     *   score: int<0,4>
+     * } Crack time data keyed by attack scenario, plus a 0–4 score
+     *
+     * @complexity O(1)
+     */
     public function estimate_attack_times(float $guesses): array
     {
         $crack_times_seconds = ['online_throttling_100_per_hour' => $guesses / (100 / 3600), 'online_no_throttling_10_per_second' => $guesses / 10, 'offline_slow_hashing_1e4_per_second' => $guesses / 10000.0, 'offline_fast_hashing_1e10_per_second' => $guesses / 10000000000.0];
         $crack_times_display = array_map([$this, 'displayTime'], $crack_times_seconds);
         return ['crack_times_seconds' => $crack_times_seconds, 'crack_times_display' => $crack_times_display, 'score' => $this->guesses_to_score($guesses)];
     }
+    /**
+     * Map a guesses count to a 0–4 security score.
+     *
+     * Score thresholds:
+     *   0 — too guessable      (<1 000)
+     *   1 — very guessable     (<1 000 000)
+     *   2 — somewhat guessable (<100 000 000)
+     *   3 — safely unguessable (<10 000 000 000)
+     *   4 — very unguessable   (everything else)
+     *
+     * @param float $guesses Raw guesses value from Scorer
+     *
+     * @return int<0,4> Strength score
+     *
+     * @complexity O(1)
+     */
     protected function guesses_to_score(float $guesses): int
     {
         $DELTA = 5;

@@ -34,6 +34,15 @@ class Matcher
         self::usort_stable($matches, [$this, 'compareMatches']);
         return $matches;
     }
+    /**
+     * Register an additional matcher class.
+     *
+     * @param string $class_name Fully-qualified class name that implements Match_Interface
+     *
+     * @return self Fluent interface for chaining
+     *
+     * @throws \InvalidArgumentException When the class does not implement Match_Interface
+     */
     public function add_matcher(string $class_name): self
     {
         if (!is_a($class_name, Match_Interface::class, true)) {
@@ -67,6 +76,16 @@ class Matcher
         }
         return $result;
     }
+    /**
+     * Compare two matches for stable sort ordering (by begin index, then end index).
+     *
+     * @param Base_Match $a First match to compare
+     * @param Base_Match $b Second match to compare
+     *
+     * @return int Negative if $a comes first, positive if $b comes first, 0 if equal
+     *
+     * @complexity O(1)
+     */
     public static function compare_matches(Base_Match $a, Base_Match $b): int
     {
         $begin_diff = $a->begin - $b->begin;

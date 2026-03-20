@@ -13,7 +13,18 @@ use Zxcvbn_Php\Matchers\Match_Interface;
 class Feedback
 {
     /**
-     * @param MatchInterface[] $sequence
+     * Generate human-readable feedback for a password based on its score and match sequence.
+     *
+     * Returns a warning string (may be empty) and an array of improvement suggestions.
+     * Feedback is tied to the longest match when multiple patterns are found, ensuring
+     * the most impactful weakness is surfaced first.
+     *
+     * @param int<0,4>          $score    Strength score from Time_Estimator (0 = weakest, 4 = strongest)
+     * @param Match_Interface[] $sequence Non-overlapping match sequence from Scorer
+     *
+     * @return array{warning: string, suggestions: string[]}
+     *
+     * @complexity O(n) where n is the number of matches in $sequence
      */
     public function get_feedback(int $score, array $sequence): array
     {
