@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php\Math\Impl;
 
-namespace ZxcvbnPhp\Math\Impl;
-
-class BinomialProviderPhp73Gmp extends AbstractBinomialProvider
+class Binomial_Provider_Php73gmp extends Abstract_Binomial_Provider
 {
     /**
      * @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection
@@ -12,6 +11,6 @@ class BinomialProviderPhp73Gmp extends AbstractBinomialProvider
      */
     protected function calculate(int $n, int $k): float
     {
-        return (float)gmp_strval(gmp_binomial($n, $k));
+        return (float) gmp_strval(gmp_binomial($n, $k));
     }
 }

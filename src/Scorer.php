@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php;
 
-namespace ZxcvbnPhp;
-
-use ZxcvbnPhp\Matchers\BaseMatch;
-use ZxcvbnPhp\Matchers\Bruteforce;
-use ZxcvbnPhp\Matchers\MatchInterface;
-
+use Zxcvbn_Php\Matchers\Base_Match;
+use Zxcvbn_Php\Matchers\Bruteforce;
+use Zxcvbn_Php\Matchers\Match_Interface;
 /**
  * scorer - takes a list of potential matches, ranks and evaluates them,
  * and figures out how many guesses it would take to crack the password
@@ -19,11 +17,9 @@ class Scorer
     public const MIN_GUESSES_BEFORE_GROWING_SEQUENCE = 10000;
     public const MIN_SUBMATCH_GUESSES_SINGLE_CHAR = 10;
     public const MIN_SUBMATCH_GUESSES_MULTI_CHAR = 50;
-
     protected $password;
-    protected $excludeAdditive;
+    protected $exclude_additive;
     protected $optimal = [];
-
     /**
      * ------------------------------------------------------------------------------
      * search --- most guessable match sequence -------------------------------------
@@ -59,192 +55,160 @@ class Scorer
      * @param MatchInterface[] $matches
      * @return array Returns an array with these keys: [password, guesses, guesses_log10, sequence]
      */
-    public function getMostGuessableMatchSequence(string $password, array $matches, bool $excludeAdditive = false): array
+    public function get_most_guessable_match_sequence(string $password, array $matches, bool $exclude_additive = false): array
     {
         $this->password = $password;
-        $this->excludeAdditive = $excludeAdditive;
-
+        $this->exclude_additive = $exclude_additive;
         $length = mb_strlen($password);
-        $emptyArray = $length > 0 ? array_fill(0, $length, []) : [];
-
+        $empty_array = $length > 0 ? array_fill(0, $length, []) : [];
         // partition matches into sublists according to ending index j
-        $matchesByEndIndex = $emptyArray;
+        $matches_by_end_index = $empty_array;
         foreach ($matches as $match) {
-            $matchesByEndIndex[$match->end][] = $match;
+            $matches_by_end_index[$match->end][] = $match;
         }
-
         // small detail: for deterministic output, sort each sublist by i.
-        foreach ($matchesByEndIndex as &$matches) {
+        foreach ($matches_by_end_index as &$matches) {
             usort($matches, function ($a, $b) {
                 /** @var $a BaseMatch */
                 /** @var $b BaseMatch */
                 return $a->begin - $b->begin;
             });
         }
-
         $this->optimal = [
             // optimal.m[k][l] holds final match in the best length-l match sequence covering the
             // password prefix up to k, inclusive.
             // if there is no length-l sequence that scores better (fewer guesses) than
             // a shorter match sequence spanning the same prefix, optimal.m[k][l] is undefined.
-            'm' => $emptyArray,
-
+            'm' => $empty_array,
             // same structure as optimal.m -- holds the product term Prod(m.guesses for m in sequence).
             // optimal.pi allows for fast (non-looping) updates to the minimization function.
-            'pi' => $emptyArray,
-
+            'pi' => $empty_array,
             // same structure as optimal.m -- holds the overall metric.
-            'g' => $emptyArray,
+            'g' => $empty_array,
         ];
-
         for ($k = 0; $k < $length; $k++) {
             /** @var BaseMatch $match */
-            foreach ($matchesByEndIndex[$k] as $match) {
+            foreach ($matches_by_end_index[$k] as $match) {
                 if ($match->begin > 0) {
                     foreach ($this->optimal['m'][$match->begin - 1] as $l => $null) {
-                        $l = (int)$l;
+                        $l = (int) $l;
                         $this->update($match, $l + 1);
                     }
                 } else {
                     $this->update($match, 1);
                 }
             }
-            $this->bruteforceUpdate($k);
+            $this->bruteforce_update($k);
         }
-
         if ($length === 0) {
             $guesses = 1.0;
-            $optimalSequence = [];
+            $optimal_sequence = [];
         } else {
-            $optimalSequence = $this->unwind($length);
-            $optimalSequenceLength = count($optimalSequence);
-            $guesses = $this->optimal['g'][$length - 1][$optimalSequenceLength];
+            $optimal_sequence = $this->unwind($length);
+            $optimal_sequence_length = count($optimal_sequence);
+            $guesses = $this->optimal['g'][$length - 1][$optimal_sequence_length];
         }
-
-        return [
-            'password' => $password,
-            'guesses' => $guesses,
-            'guesses_log10' => log10($guesses),
-            'sequence' => $optimalSequence,
-        ];
+        return ['password' => $password, 'guesses' => $guesses, 'guesses_log10' => log10($guesses), 'sequence' => $optimal_sequence];
     }
-
     /**
      * helper: considers whether a length-l sequence ending at match m is better (fewer guesses)
      * than previously encountered sequences, updating state if so.
      */
-    protected function update(BaseMatch $match, int $length): void
+    protected function update(Base_Match $match, int $length): void
     {
         $k = $match->end;
-
         // Upstream has a call to estimateGuesses for this line (which contains some extra logic), but due to our
         // object-oriented approach we can just call getGuesses on the match directly.
-        $pi = $match->getGuesses();
-
+        $pi = $match->get_guesses();
         if ($length > 1) {
             // we're considering a length-l sequence ending with match m:
             // obtain the product term in the minimization function by multiplying m's guesses
             // by the product of the length-(l-1) sequence ending just before m, at m.i - 1.
             $pi *= $this->optimal['pi'][$match->begin - 1][$length - 1];
         }
-
         // calculate the minimization func
         $g = $this->factorial($length) * $pi;
-        if (!$this->excludeAdditive) {
+        if (!$this->exclude_additive) {
             $g += self::MIN_GUESSES_BEFORE_GROWING_SEQUENCE ** ($length - 1);
         }
-
         // update state if new best.
         // first see if any competing sequences covering this prefix, with l or fewer matches,
         // fare better than this sequence. if so, skip it and return.
-        foreach ($this->optimal['g'][$k] as $competingL => $competingG) {
-            if ($competingL > $length) {
+        foreach ($this->optimal['g'][$k] as $competing_l => $competing_g) {
+            if ($competing_l > $length) {
                 continue;
             }
-            if ($competingG <= $g) {
+            if ($competing_g <= $g) {
                 return;
             }
         }
-
         $this->optimal['g'][$k][$length] = $g;
         $this->optimal['m'][$k][$length] = $match;
         $this->optimal['pi'][$k][$length] = $pi;
-
         // Sort the arrays by key after each insert to match how JavaScript objects work
         // Failing to do this results in slightly different matches in some scenarios
         ksort($this->optimal['g'][$k]);
         ksort($this->optimal['m'][$k]);
         ksort($this->optimal['pi'][$k]);
     }
-
     /**
      * helper: evaluate bruteforce matches ending at k
      */
-    protected function bruteforceUpdate(int $end): void
+    protected function bruteforce_update(int $end): void
     {
         // see if a single bruteforce match spanning the k-prefix is optimal.
-        $match = $this->makeBruteforceMatch(0, $end);
+        $match = $this->make_bruteforce_match(0, $end);
         $this->update($match, 1);
-
         // generate k bruteforce matches, spanning from (i=1, j=k) up to (i=k, j=k).
         // see if adding these new matches to any of the sequences in optimal[i-1]
         // leads to new bests.
         for ($i = 1; $i <= $end; $i++) {
-            $match = $this->makeBruteforceMatch($i, $end);
-            foreach ($this->optimal['m'][$i - 1] as $l => $lastM) {
-                $l = (int)$l;
-
+            $match = $this->make_bruteforce_match($i, $end);
+            foreach ($this->optimal['m'][$i - 1] as $l => $last_m) {
+                $l = (int) $l;
                 // corner: an optimal sequence will never have two adjacent bruteforce matches.
                 // it is strictly better to have a single bruteforce match spanning the same region:
                 // same contribution to the guess product with a lower length.
                 // --> safe to skip those cases.
-                if ($lastM->pattern === 'bruteforce') {
+                if ($last_m->pattern === 'bruteforce') {
                     continue;
                 }
-
                 $this->update($match, $l + 1);
             }
         }
     }
-
     /**
      * helper: make bruteforce match objects spanning i to j, inclusive.
      */
-    protected function makeBruteforceMatch(int $begin, int $end): Bruteforce
+    protected function make_bruteforce_match(int $begin, int $end): Bruteforce
     {
         return new Bruteforce($this->password, $begin, $end, mb_substr($this->password, $begin, $end - $begin + 1));
     }
-
     /**
      * helper: step backwards through optimal.m starting at the end, constructing the final optimal match sequence.
      * @return MatchInterface[]
      */
     protected function unwind(int $n): array
     {
-        $optimalSequence = [];
+        $optimal_sequence = [];
         $k = $n - 1;
-
         // find the final best sequence length and score
         $l = null;
         $g = INF;
-
-        foreach ($this->optimal['g'][$k] as $candidateL => $candidateG) {
-            if ($candidateG < $g) {
-                $l = $candidateL;
-                $g = $candidateG;
+        foreach ($this->optimal['g'][$k] as $candidate_l => $candidate_g) {
+            if ($candidate_g < $g) {
+                $l = $candidate_l;
+                $g = $candidate_g;
             }
         }
-
         while ($k >= 0) {
             $m = $this->optimal['m'][$k][$l];
-            array_unshift($optimalSequence, $m);
+            array_unshift($optimal_sequence, $m);
             $k = $m->begin - 1;
             $l--;
         }
-
-        return $optimalSequence;
+        return $optimal_sequence;
     }
-
     /**
      * unoptimized, called only on small n
      */

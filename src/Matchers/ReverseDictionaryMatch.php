@@ -1,59 +1,50 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php\Matchers;
 
-namespace ZxcvbnPhp\Matchers;
-
-use ZxcvbnPhp\Matcher;
-
-class ReverseDictionaryMatch extends DictionaryMatch
+use Zxcvbn_Php\Matcher;
+class Reverse_Dictionary_Match extends Dictionary_Match
 {
     /** @var bool Whether or not the matched word was reversed in the token. */
     public $reversed = true;
-
     /**
      * Match occurences of reversed dictionary words in password.
      *
      * @param $password
      * @return ReverseDictionaryMatch[]
      */
-    public static function match(string $password, array $userInputs = [], array $rankedDictionaries = []): array
+    public static function match(string $password, array $user_inputs = [], array $ranked_dictionaries = []): array
     {
         /** @var ReverseDictionaryMatch[] $matches */
-        $matches = parent::match(self::mbStrRev($password), $userInputs, $rankedDictionaries);
+        $matches = parent::match(self::mb_str_rev($password), $user_inputs, $ranked_dictionaries);
         foreach ($matches as $match) {
-            $tempBegin = $match->begin;
-
+            $temp_begin = $match->begin;
             // Change the token, password and [begin, end] values to match the original password
-            $match->token = self::mbStrRev($match->token);
-            $match->password = self::mbStrRev($match->password);
+            $match->token = self::mb_str_rev($match->token);
+            $match->password = self::mb_str_rev($match->password);
             $match->begin = mb_strlen($password) - 1 - $match->end;
-            $match->end = mb_strlen($password) - 1 - $tempBegin;
+            $match->end = mb_strlen($password) - 1 - $temp_begin;
         }
-        Matcher::usortStable($matches, [Matcher::class, 'compareMatches']);
+        Matcher::usort_stable($matches, [Matcher::class, 'compareMatches']);
         return $matches;
     }
-
-    protected function getRawGuesses(): float
+    protected function get_raw_guesses(): float
     {
-        return parent::getRawGuesses() * 2;
+        return parent::get_raw_guesses() * 2;
     }
-
     /**
      * @return array{'warning': string, "suggestions": string[]}
      */
-    public function getFeedback(bool $isSoleMatch): array
+    public function get_feedback(bool $is_sole_match): array
     {
-        $feedback = parent::getFeedback($isSoleMatch);
-
+        $feedback = parent::get_feedback($is_sole_match);
         if (mb_strlen($this->token) >= 4) {
             $feedback['suggestions'][] = "Reversed words aren't much harder to guess";
         }
-
         return $feedback;
     }
-
-    public static function mbStrRev(string $string, ?string $encoding = null): string
+    public static function mb_str_rev(string $string, ?string $encoding = null): string
     {
         if ($encoding === null) {
             $encoding = mb_detect_encoding($string) ?: 'UTF-8';
@@ -63,7 +54,6 @@ class ReverseDictionaryMatch extends DictionaryMatch
         while ($length-- > 0) {
             $reversed .= mb_substr($string, $length, 1, $encoding);
         }
-
         return $reversed;
     }
 }

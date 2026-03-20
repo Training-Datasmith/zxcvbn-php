@@ -1,66 +1,49 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php\Math;
 
-namespace ZxcvbnPhp\Math;
-
-use ZxcvbnPhp\Math\Impl\BinomialProviderFloat64;
-use ZxcvbnPhp\Math\Impl\BinomialProviderInt64;
-use ZxcvbnPhp\Math\Impl\BinomialProviderPhp73Gmp;
-
+use Zxcvbn_Php\Math\Impl\Binomial_Provider_Float64;
+use Zxcvbn_Php\Math\Impl\Binomial_Provider_Int64;
+use Zxcvbn_Php\Math\Impl\Binomial_Provider_Php73gmp;
 class Binomial
 {
     private static $provider;
-
     private function __construct()
     {
         throw new \LogicException(self::class . ' is static');
     }
-
     /**
      * Calculate binomial coefficient (n choose k).
      */
     public static function binom(int $n, int $k): float
     {
-        return self::getProvider()->binom($n, $k);
+        return self::get_provider()->binom($n, $k);
     }
-
-    public static function getProvider(): BinomialProvider
+    public static function get_provider(): Binomial_Provider
     {
         if (self::$provider === null) {
-            self::$provider = self::initProvider();
+            self::$provider = self::init_provider();
         }
-
         return self::$provider;
     }
-
     /**
      * @return string[]
      */
-    public static function getUsableProviderClasses(): array
+    public static function get_usable_provider_classes(): array
     {
         // In order of priority.  The first provider with a value of true will be used.
-        $possibleProviderClasses = [
-            BinomialProviderPhp73Gmp::class => function_exists('gmp_binomial'),
-            BinomialProviderInt64::class    => PHP_INT_SIZE >= 8,
-            BinomialProviderFloat64::class  => PHP_FLOAT_DIG >= 15,
-        ];
-
-        $possibleProviderClasses = array_filter($possibleProviderClasses);
-
-        return array_keys($possibleProviderClasses);
+        $possible_provider_classes = [Binomial_Provider_Php73gmp::class => function_exists('gmp_binomial'), Binomial_Provider_Int64::class => PHP_INT_SIZE >= 8, Binomial_Provider_Float64::class => PHP_FLOAT_DIG >= 15];
+        $possible_provider_classes = array_filter($possible_provider_classes);
+        return array_keys($possible_provider_classes);
     }
-
-    private static function initProvider(): BinomialProvider
+    private static function init_provider(): Binomial_Provider
     {
-        $providerClasses = self::getUsableProviderClasses();
-
-        if (!$providerClasses) {
+        $provider_classes = self::get_usable_provider_classes();
+        if (!$provider_classes) {
             throw new \LogicException('No valid providers');
         }
-
-        $bestProviderClass = reset($providerClasses);
-
-        return new $bestProviderClass();
+        $best_provider_class = reset($provider_classes);
+        return new $best_provider_class();
     }
 }

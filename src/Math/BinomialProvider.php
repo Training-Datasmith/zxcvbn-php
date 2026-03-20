@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php\Math;
 
-namespace ZxcvbnPhp\Math;
-
-interface BinomialProvider
+interface Binomial_Provider
 {
     /**
      * Calculate binomial coefficient (n choose k).

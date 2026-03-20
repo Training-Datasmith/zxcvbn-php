@@ -1,39 +1,32 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php\Matchers;
 
-namespace ZxcvbnPhp\Matchers;
-
-use ZxcvbnPhp\Math\Binomial;
-use ZxcvbnPhp\Scorer;
-
-abstract class BaseMatch implements MatchInterface
+use Zxcvbn_Php\Math\Binomial;
+use Zxcvbn_Php\Scorer;
+abstract class Base_Match implements Match_Interface
 {
     /**
      * @var
      */
     public $password;
-
     /**
      * @var
      */
     public $begin;
-
     /**
      * @var
      */
     public $end;
-
     /**
      * @var
      */
     public $token;
-
     /**
      * @var
      */
     public $pattern;
-
     public function __construct(string $password, int $begin, int $end, string $token)
     {
         $this->password = $password;
@@ -41,7 +34,6 @@ abstract class BaseMatch implements MatchInterface
         $this->end = $end;
         $this->token = $token;
     }
-
     /**
      * Get feedback to a user based on the match.
      *
@@ -49,8 +41,7 @@ abstract class BaseMatch implements MatchInterface
      *   Whether this is the only match in the password
      * @return array{'warning': string, "suggestions": string[]}
      */
-    abstract public function getFeedback(bool $isSoleMatch): array;
-
+    abstract public function get_feedback(bool $is_sole_match): array;
     /**
      * Find all occurrences of regular expression in a string.
      *
@@ -72,45 +63,32 @@ abstract class BaseMatch implements MatchInterface
      *       )
      *     )
      */
-    public static function findAll(string $string, string $regex, int $offset = 0): array
+    public static function find_all(string $string, string $regex, int $offset = 0): array
     {
         // $offset is the number of multibyte-aware number of characters to offset, but the offset parameter for
         // preg_match_all counts bytes, not characters: to correct this, we need to calculate the byte offset and pass
         // that in instead.
-        $charsBeforeOffset = mb_substr($string, 0, $offset);
-        $byteOffset = strlen($charsBeforeOffset);
-
-        $count = preg_match_all($regex, $string, $matches, PREG_SET_ORDER, $byteOffset);
+        $chars_before_offset = mb_substr($string, 0, $offset);
+        $byte_offset = strlen($chars_before_offset);
+        $count = preg_match_all($regex, $string, $matches, PREG_SET_ORDER, $byte_offset);
         if (!$count) {
             return [];
         }
-
         $groups = [];
         foreach ($matches as $group) {
-            $captureBegin = 0;
+            $capture_begin = 0;
             $match = array_shift($group);
-            $matchBegin = mb_strpos($string, $match, $offset);
-            $captures = [
-                [
-                    'begin' => $matchBegin,
-                    'end' => $matchBegin + mb_strlen($match) - 1,
-                    'token' => $match,
-                ],
-            ];
+            $match_begin = mb_strpos($string, $match, $offset);
+            $captures = [['begin' => $match_begin, 'end' => $match_begin + mb_strlen($match) - 1, 'token' => $match]];
             foreach ($group as $capture) {
-                $captureBegin = mb_strpos($match, $capture, $captureBegin);
-                $captures[] = [
-                    'begin' => $matchBegin + $captureBegin,
-                    'end' => $matchBegin + $captureBegin + mb_strlen($capture) - 1,
-                    'token' => $capture,
-                ];
+                $capture_begin = mb_strpos($match, $capture, $capture_begin);
+                $captures[] = ['begin' => $match_begin + $capture_begin, 'end' => $match_begin + $capture_begin + mb_strlen($capture) - 1, 'token' => $capture];
             }
             $groups[] = $captures;
             $offset += mb_strlen($match) - 1;
         }
         return $groups;
     }
-
     /**
      * Calculate binomial coefficient (n choose k).
      *
@@ -120,15 +98,12 @@ abstract class BaseMatch implements MatchInterface
     {
         return Binomial::binom($n, $k);
     }
-
-    abstract protected function getRawGuesses(): float;
-
-    public function getGuesses(): float
+    abstract protected function get_raw_guesses(): float;
+    public function get_guesses(): float
     {
-        return max($this->getRawGuesses(), $this->getMinimumGuesses());
+        return max($this->get_raw_guesses(), $this->get_minimum_guesses());
     }
-
-    protected function getMinimumGuesses(): float
+    protected function get_minimum_guesses(): float
     {
         if (mb_strlen($this->token) >= mb_strlen($this->password)) {
             return 0;
@@ -138,9 +113,8 @@ abstract class BaseMatch implements MatchInterface
         }
         return Scorer::MIN_SUBMATCH_GUESSES_MULTI_CHAR;
     }
-
-    public function getGuessesLog10(): float
+    public function get_guesses_log10(): float
     {
-        return log10($this->getGuesses());
+        return log10($this->get_guesses());
     }
 }

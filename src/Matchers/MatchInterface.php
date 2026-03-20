@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php\Matchers;
 
-namespace ZxcvbnPhp\Matchers;
-
-interface MatchInterface
+interface Match_Interface
 {
     /**
      * Match this password.
@@ -16,9 +15,7 @@ interface MatchInterface
      *
      * @return array|BaseMatch[] Array of Match objects
      */
-    public static function match(string $password, array $userInputs = []): array;
-
-    public function getGuesses(): float;
-
-    public function getGuessesLog10(): float;
+    public static function match(string $password, array $user_inputs = []): array;
+    public function get_guesses(): float;
+    public function get_guesses_log10(): float;
 }

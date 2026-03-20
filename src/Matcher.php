@@ -1,27 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Zxcvbn_Php;
 
-namespace ZxcvbnPhp;
-
-use ZxcvbnPhp\Matchers\BaseMatch;
-use ZxcvbnPhp\Matchers\MatchInterface;
-
+use Zxcvbn_Php\Matchers\Base_Match;
+use Zxcvbn_Php\Matchers\Match_Interface;
 class Matcher
 {
-    private const DEFAULT_MATCHERS = [
-        Matchers\DateMatch::class,
-        Matchers\DictionaryMatch::class,
-        Matchers\ReverseDictionaryMatch::class,
-        Matchers\L33tMatch::class,
-        Matchers\RepeatMatch::class,
-        Matchers\SequenceMatch::class,
-        Matchers\SpatialMatch::class,
-        Matchers\YearMatch::class,
-    ];
-
-    private $additionalMatchers = [];
-
+    private const DEFAULT_MATCHERS = [Matchers\Date_Match::class, Matchers\Dictionary_Match::class, Matchers\Reverse_Dictionary_Match::class, Matchers\L33t_Match::class, Matchers\Repeat_Match::class, Matchers\Sequence_Match::class, Matchers\Spatial_Match::class, Matchers\Year_Match::class];
+    private $additional_matchers = [];
     /**
      * Get matches for a password.
      *
@@ -34,33 +21,27 @@ class Matcher
      *
      * @see  zxcvbn/src/matching.coffee::omnimatch
      */
-    public function getMatches(string $password, array $userInputs = []): array
+    public function get_matches(string $password, array $user_inputs = []): array
     {
         $matches = [];
-        foreach ($this->getMatchers() as $matcher) {
-            $matched = $matcher::match($password, $userInputs);
+        foreach ($this->get_matchers() as $matcher) {
+            $matched = $matcher::match($password, $user_inputs);
             if (is_array($matched) && !empty($matched)) {
                 $matches[] = $matched;
             }
         }
-
         $matches = array_merge([], ...$matches);
-        self::usortStable($matches, [$this, 'compareMatches']);
-
+        self::usort_stable($matches, [$this, 'compareMatches']);
         return $matches;
     }
-
-    public function addMatcher(string $className): self
+    public function add_matcher(string $class_name): self
     {
-        if (!is_a($className, MatchInterface::class, true)) {
-            throw new \InvalidArgumentException(sprintf('Matcher class must implement %s', MatchInterface::class));
+        if (!is_a($class_name, Match_Interface::class, true)) {
+            throw new \InvalidArgumentException(sprintf('Matcher class must implement %s', Match_Interface::class));
         }
-
-        $this->additionalMatchers[$className] = $className;
-
+        $this->additional_matchers[$class_name] = $class_name;
         return $this;
     }
-
     /**
      * A stable implementation of usort().
      *
@@ -71,7 +52,7 @@ class Matcher
      * This function taken from https://github.com/vanderlee/PHP-stable-sort-functions
      * Copyright © 2015-2018 Martijn van der Lee (http://martijn.vanderlee.com). MIT License applies.
      */
-    public static function usortStable(array &$array, callable $value_compare_func): bool
+    public static function usort_stable(array &$array, callable $value_compare_func): bool
     {
         $index = 0;
         foreach ($array as &$item) {
@@ -86,26 +67,21 @@ class Matcher
         }
         return $result;
     }
-
-    public static function compareMatches(BaseMatch $a, BaseMatch $b): int
+    public static function compare_matches(Base_Match $a, Base_Match $b): int
     {
-        $beginDiff = $a->begin - $b->begin;
-        if ($beginDiff) {
-            return $beginDiff;
+        $begin_diff = $a->begin - $b->begin;
+        if ($begin_diff) {
+            return $begin_diff;
         }
         return $a->end - $b->end;
     }
-
     /**
      * Load available Match objects to match against a password.
      *
      * @return array Array of classes implementing MatchInterface
      */
-    protected function getMatchers(): array
+    protected function get_matchers(): array
     {
-        return array_merge(
-            self::DEFAULT_MATCHERS,
-            array_values($this->additionalMatchers)
-        );
+        return array_merge(self::DEFAULT_MATCHERS, array_values($this->additional_matchers));
     }
 }

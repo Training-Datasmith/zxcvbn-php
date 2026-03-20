@@ -1,8 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
-namespace ZxcvbnPhp;
+declare (strict_types=1);
+namespace Zxcvbn_Php;
 
 /**
  * The main entry point.
@@ -15,37 +14,30 @@ class Zxcvbn
      * @var
      */
     protected $matcher;
-
     /**
      * @var
      */
     protected $scorer;
-
     /**
      * @var
      */
-    protected $timeEstimator;
-
+    protected $time_estimator;
     /**
      * @var
      */
     protected $feedback;
-
     public function __construct()
     {
-        $this->matcher = new \ZxcvbnPhp\Matcher();
-        $this->scorer = new \ZxcvbnPhp\Scorer();
-        $this->timeEstimator = new \ZxcvbnPhp\TimeEstimator();
-        $this->feedback = new \ZxcvbnPhp\Feedback();
+        $this->matcher = new \Zxcvbn_Php\Matcher();
+        $this->scorer = new \Zxcvbn_Php\Scorer();
+        $this->time_estimator = new \Zxcvbn_Php\Time_Estimator();
+        $this->feedback = new \Zxcvbn_Php\Feedback();
     }
-
-    public function addMatcher(string $className): self
+    public function add_matcher(string $class_name): self
     {
-        $this->matcher->addMatcher($className);
-
+        $this->matcher->add_matcher($class_name);
         return $this;
     }
-
     /**
      * Calculate password strength via non-overlapping minimum entropy patterns.
      *
@@ -58,33 +50,19 @@ class Zxcvbn
      *               match_sequence
      *               score
      */
-    public function passwordStrength(string $password, array $userInputs = []): array
+    public function password_strength(string $password, array $user_inputs = []): array
     {
-        $timeStart = microtime(true);
-
-        $sanitizedInputs = array_map(
-            function ($input) {
-                return mb_strtolower((string) $input);
-            },
-            $userInputs
-        );
-
+        $time_start = microtime(true);
+        $sanitized_inputs = array_map(function ($input) {
+            return mb_strtolower((string) $input);
+        }, $user_inputs);
         // Get matches for $password.
         // Although the coffeescript upstream sets $sanitizedInputs as a property,
         // doing this immutably makes more sense and is a bit easier
-        $matches = $this->matcher->getMatches($password, $sanitizedInputs);
-
-        $result = $this->scorer->getMostGuessableMatchSequence($password, $matches);
-        $attackTimes = $this->timeEstimator->estimateAttackTimes($result['guesses']);
-        $feedback = $this->feedback->getFeedback($attackTimes['score'], $result['sequence']);
-
-        return array_merge(
-            $result,
-            $attackTimes,
-            [
-                'feedback'  => $feedback,
-                'calc_time' => microtime(true) - $timeStart,
-            ]
-        );
+        $matches = $this->matcher->get_matches($password, $sanitized_inputs);
+        $result = $this->scorer->get_most_guessable_match_sequence($password, $matches);
+        $attack_times = $this->time_estimator->estimate_attack_times($result['guesses']);
+        $feedback = $this->feedback->get_feedback($attack_times['score'], $result['sequence']);
+        return array_merge($result, $attack_times, ['feedback' => $feedback, 'calc_time' => microtime(true) - $time_start]);
     }
 }
