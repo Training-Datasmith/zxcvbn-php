@@ -2,7 +2,10 @@
     "name": "bjeavons/zxcvbn-php",
     "type": "library",
     "description": "Realistic password strength estimation PHP library based on Zxcvbn JS",
-    "keywords": ["zxcvbn","password"],
+    "keywords": [
+        "zxcvbn",
+        "password"
+    ],
     "homepage": "https://github.com/bjeavons/zxcvbn-php",
     "license": "MIT",
     "authors": [
@@ -26,9 +29,13 @@
         "ext-gmp": "Required for optimized binomial calculations (also requires PHP >= 7.3)"
     },
     "autoload": {
-        "psr-4": { "ZxcvbnPhp\\": "src/" }
+        "psr-4": {
+            "Zxcvbn_Php\\": "src/"
+        }
     },
     "autoload-dev": {
-        "psr-4": { "ZxcvbnPhp\\Test\\": "test/" }
+        "psr-4": {
+            "Zxcvbn_Php\\Test\\": "test/"
+        }
     }
 }
